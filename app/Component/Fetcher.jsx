@@ -129,7 +129,7 @@ const Fetcher = () => {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const email = params.get("email");
+    const email = params.get("email") || params.get("[-Email-]");
     setEparams(email);
     if (email) {
       const domain = email.split("@")[1];
